@@ -74,7 +74,7 @@ class PythonNexus:
             params={},
             http_body={}):
         if organization is None:
-            organization = _base_organization
+            organization = self._base_organization
         url = self.url + "organizations/" + organization
         return self._actions(action, url, params, http_body)
 
