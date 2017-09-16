@@ -29,19 +29,17 @@ class PythonNexus:
                 params_text += key + "=" + str(params[key])
         url += params_text
 
-        if action == "show":
-            return self._http_request("GET", url, http_body_text)
+        assignments = {
+                "write" : "GET",
+                "create" : "POST",
+                "update" : "PUT",
+                "delete" : "DELETE"
+            }
 
-        elif action == "create":
-            return self._http_request("POST", url, http_body_text)
-
-        elif action == "update":
-            return self._http_request("PUT", url, http_body_text)
-
-        elif action == "delete":
-            return self._http_request("DELETE", url, http_body_text)
+        if action in assigments:
+            return self._http_request(assignments[action], url, http_body_text)
         else:
-            return self._error("Error throw")
+            self._error("Unknown action")
 
     def _error(self, error_message):
         error = {}
@@ -52,7 +50,6 @@ class PythonNexus:
         http = urllib3.PoolManager()
 
         url+="&pretty=true"
-        print(url)
         
         r = http.request(
                 method,
@@ -60,7 +57,6 @@ class PythonNexus:
                 headers={'Content-Type': 'application/json'},
                 body=http_body)
         
-        print(r.data.decode(self._encoding))
         return json.loads(r.data.decode(self._encoding))
 
     def organizations(self, params={}):
