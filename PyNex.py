@@ -1,6 +1,7 @@
 import urllib3
 import json
 
+
 class PyNex:
     def __init__(
            self,
@@ -22,7 +23,7 @@ class PyNex:
 
         for key in params:
             if params[key] is True:
-                params_text += key + "=true" 
+                params_text += key + "=true"
             elif params[key] is False:
                 params_text += key + "=false"
             else:
@@ -31,10 +32,10 @@ class PyNex:
         url += params_text
 
         assignments = {
-                "read" : "GET",
-                "create" : "PUT",
-                "update" : "POST",
-                "delete" : "DELETE"
+                "read": "GET",
+                "create": "PUT",
+                "update": "POST",
+                "delete": "DELETE"
             }
 
         if action in assignments:
@@ -47,16 +48,16 @@ class PyNex:
         error["success"] = False
         error["message"] = error_message
         return error
-    
+
     def _http_request(self, method, url, http_body):
         http = urllib3.PoolManager()
-        
+
         r = http.request(
                 method,
                 url,
                 headers={'Content-Type': 'application/json'},
                 body=http_body)
-        
+
         return json.loads(r.data.decode(self._encoding))
 
     def organizations(self, params={}):
@@ -73,8 +74,8 @@ class PyNex:
             organization = self._base_organization
 
         url_formatting = {
-                "url" : self.url,
-                "organization" : organization
+                "url": self.url,
+                "organization": organization
             }
 
         url_format = "{url}/organizations/{organization}"
@@ -82,15 +83,13 @@ class PyNex:
         url = url_format.format(**url_formatting)
         return self._actions(action, url, params, http_body)
 
-
     def domains(self, organization=None, params={}):
-
         if organization is None:
             organization = self._base_organization
 
         url_formatting = {
                 "url": self.url,
-                "organization" : organization
+                "organization": organization
             }
 
         url_format = "{url}/organizations/{organization}/domains"
@@ -111,8 +110,8 @@ class PyNex:
 
         url_formatting = {
                 "url": self.url,
-                "organization" : organization,
-                "domain" : domain
+                "organization": organization,
+                "domain": domain
             }
 
         url_format = "{url}/organizations/{organization}/domains/{domain}"
@@ -131,13 +130,13 @@ class PyNex:
 
         url_formatting = {
                 "url": self.url,
-                "organization" : organization
+                "organization": organization
             }
 
         url_format = "{url}/schemas/{organization}/"
         url = url_format.format(**url_formatting)
 
-        if not domain is None:
+        if domain is not None:
             url += domain + "/"
 
         return self._actions("read", url, params, http_body)
@@ -155,11 +154,11 @@ class PyNex:
             organization = self._base_organization
 
         url_formatting = {
-                "url" : self.url,
-                "organization" : organization,
-                "domain" : domain,
-                "name" : name,
-                "version" : version
+                "url": self.url,
+                "organization": organization,
+                "domain": domain,
+                "name": name,
+                "version": version
             }
 
         url_format = "{url}/schemas/{organization}/{domain}/{name}/{version}"
@@ -182,13 +181,13 @@ class PyNex:
 
         url = self.url + "/data/"
 
-        if not organization is "":
+        if organization is not "":
             url += organization + "/"
-        if not domain is "":
+        if domain is not "":
             url += domain + "/"
-        if not name is "":
+        if name is not "":
             url += name + "/"
-        if not version is "":
+        if version is not "":
             url += version + "/"
 
         return self._actions("read", url, params, http_body)
@@ -205,7 +204,7 @@ class PyNex:
         if organization is None:
             organization = self._base_organization
 
-        params = { "q" : search_query }
+        params = {"q": search_query}
 
         return self.instances(domain, name, version, organization, params)
 
@@ -232,4 +231,3 @@ class PyNex:
             )
         print(url)
         return self._actions(action, url, params, http_body)
-
