@@ -59,7 +59,7 @@ class PyNex:
         
         return json.loads(r.data.decode(self._encoding))
 
-    def organizations(self, params={}):
+    def organization_list(self, params={}):
         url = self.url + "/organizations"
         return self._actions("read", url, params)
 
@@ -83,7 +83,7 @@ class PyNex:
         return self._actions(action, url, params, http_body)
 
 
-    def domains(self, organization=None, params={}):
+    def domain_list(self, organization=None, params={}):
 
         if organization is None:
             organization = self._base_organization
@@ -120,7 +120,7 @@ class PyNex:
 
         return self._actions(action, url, params, http_body)
 
-    def schemas(
+    def schema_list(
             self,
             domain=None,
             organization=None,
@@ -168,7 +168,7 @@ class PyNex:
 
         return self._actions(action, url, params, http_body)
 
-    def instances(
+    def instance_list(
             self,
             domain="",
             name="",
@@ -207,7 +207,7 @@ class PyNex:
 
         params = { "q" : search_query }
 
-        return self.instances(domain, name, version, organization, params)
+        return self.instance_list(domain, name, version, organization, params)
 
     def instance(
             self,
@@ -230,19 +230,21 @@ class PyNex:
                 version,
                 instance
             )
-        print(url)
         return self._actions(action, url, params, http_body)
 
-    def match(self, search, dataset):
+    @staticmethod
+    def match(search, dataset):
         result = []
 
         for data in dataset:
-            found = True
-            for entry in data:
-                if entry in search and search[entry] != data[entry]:
-                    found = False
+            match = 0
 
-            if found:
+            for entry in data:
+                for s in search:
+                    if s == entry and search[s] == data[s]:
+                        match += 1
+
+            if match == len(search):
                 result.append(data)
 
         return result
